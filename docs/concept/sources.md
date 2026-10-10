@@ -13,7 +13,7 @@
 | Sidekick переводит вопросы в отчёты ShopifyQL | [Shopify Changelog](https://changelog.shopify.com/posts/turn-business-questions-into-analytics-reports-with-natural-language-queries) | вендор |
 | SNOCKS: отчёты быстрее на 98% (≈30 минут → секунды), 4 отдела сами строят отчёты, руководитель e-commerce проверяет собранные Sidekick Flow и выпускает их в работу | [кейс SNOCKS](https://www.shopify.com/case-studies/snocks-sidekick) | кейс вендора |
 | Flow: триггеры, условия, действия, расписание, складские сценарии; скриншот workflow | [страница Shopify Flow](https://www.shopify.com/flow) | вендор |
-| Flow в Sidekick работают надёжно, KPI-анализы ненадёжны | [тест tante-e](https://tante-e.com/en/blogs/tante-e-blog/shopify-sidekick-test) | независимый тест |
+| Flow в Sidekick работают надёжно, KPI-анализы ненадёжны | тест tante-e: `https://tante-e.com/en/blogs/tante-e-blog/shopify-sidekick-test` | независимый тест |
 
 ## Пример 2. Битрикс24
 
@@ -44,4 +44,7 @@
   наличие в конкретной конфигурации компании — открытый вопрос.
 - Поддержку вызова функций в GigaChat видно по его SDK. Тариф и условия
   хранения данных надо уточнить у вендора.
+- Тест tante-e открывается в браузере, но Cloudflare отвечает любому
+  небраузерному клиенту ошибкой 429. Поэтому адрес дан текстом, а не ссылкой:
+  иначе он ломает проверку ссылок в CI.
 - Все цифры в сквозном сценарии условные и показывают только механику контура.
