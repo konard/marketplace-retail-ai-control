@@ -14,8 +14,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-project = "my-package"
-author = "Your Name"
+project = "marketplace-retail-ai-control"
+author = "konard"
 
 try:
     release = metadata.version("my-package")
@@ -30,7 +30,11 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "myst_parser",
+    "sphinxcontrib.mermaid",
 ]
+
+# Render ```mermaid fences in Markdown (the concept's diagrams) as diagrams.
+myst_fence_as_directive = ["mermaid"]
 
 autosummary_generate = True
 autodoc_typehints = "description"
