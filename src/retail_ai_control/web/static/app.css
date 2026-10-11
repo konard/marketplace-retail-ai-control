@@ -21,6 +21,10 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .verdict { font-size: 1.25rem; }
 .error-summary { border: .2rem solid var(--pico-del-color); border-radius: var(--pico-border-radius); padding: 1rem 1.25rem 0; margin-bottom: var(--pico-spacing); }
 .error-summary a { color: var(--pico-del-color); font-weight: 600; }
+/* WCAG 1.4.10 Reflow: the menu wraps instead of scrolling sideways on a phone. */
+@media (max-width: 575px) {
+  header nav, header nav ul { flex-wrap: wrap; }
+}
 /* The decision card: analysis on the left, what the approver acts on in a
    sticky panel on the right; one column on narrow screens. */
 .card-layout { display: grid; gap: var(--pico-block-spacing-horizontal); }
