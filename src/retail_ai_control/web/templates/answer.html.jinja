@@ -1,0 +1,19 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<p><a href="/">← К отклонениям</a></p>
+<h1>{{ title }}</h1>
+<p><strong>Вопрос:</strong> {{ question }}</p>
+<article>
+  {% if answer.label %}<p><span class="source-label">{{ answer.label }}</span></p>{% endif %}
+  <p id="answer">{{ answer.text }}</p>
+  {% if answer.links %}
+  <footer>
+    <p>Проверить:</p>
+    <ul>
+    {% for name, href in answer.links %}<li><a href="{{ href }}">{{ name }}</a></li>{% endfor %}
+    </ul>
+  </footer>
+  {% endif %}
+</article>
+<p class="notice">Цифры ответа проверены по результатам запросов к витрине данных. Ответ без подтверждённых цифр не показывается.</p>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p>Задачи по утверждённым решениям: кто выполняет их в срок и чьи решения дают эффект.</p>
+{% if rows %}
+<table>
+  <caption>Исполнение решений по сотрудникам</caption>
+  <thead>
+    <tr><th scope="col">Сотрудник</th><th scope="col" class="num">Задачи</th><th scope="col" class="num">В срок</th><th scope="col" class="num">Просрочено</th><th scope="col" class="num">Цель достигнута</th></tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <th scope="row">{{ row.responsible }}</th>
+      <td class="num">{{ row.tasks }}</td>
+      <td class="num">{{ row.on_time_pct }}%</td>
+      <td class="num">{{ row.overdue }}</td>
+      <td class="num">{{ row.achieved_pct }}%</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Задач по решениям пока нет.</p>
+{% endif %}
+{% endblock %}

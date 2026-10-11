@@ -18,6 +18,8 @@ from typing import TYPE_CHECKING, Any, Optional
 from sqlalchemy import insert, select, update
 from sqlalchemy.engine import Connection
 
+from retail_ai_control.config import Config
+from retail_ai_control.fmt import pct
 from retail_ai_control.mart import decision, deviation, log_event, new_id
 
 if TYPE_CHECKING:
@@ -35,12 +37,17 @@ ALREADY_DECIDED = "Решение уже принято"
 
 
 class DecisionError(Exception):
-    """A request that cannot be carried out, with an HTTP status."""
+    """A request that cannot be carried out, with an HTTP status.
 
-    def __init__(self, status: int, message: str) -> None:
+    ``field`` names the input the message is about: an action type or
+    ``reason``.
+    """
+
+    def __init__(self, status: int, message: str, field: str = "") -> None:
         super().__init__(message)
         self.status = status
         self.message = message
+        self.field = field
 
 
 def create_decision(
@@ -116,6 +123,20 @@ def is_significant(
     return False
 
 
+def limit_error(action: dict[str, Any], config: Config) -> Optional[str]:
+    """Explain in Russian why an edited action breaks a limit, or ``None``."""
+    kind, value = action.get("type"), action.get("value")
+    if value is None:
+        return None
+    if kind == "change_price" and abs(value) > config.price_change_max_pct:
+        return f"Изменение цены — не больше {pct(config.price_change_max_pct)}"
+    if kind == "set_ad_share" and not 0 <= value <= config.ad_share_limit_pct:
+        return f"Доля рекламы — от 0 до {pct(config.ad_share_limit_pct)}"
+    if kind == "restock" and value < 0:
+        return "Поставка не может быть отрицательной"
+    return None
+
+
 def _check(
     pilot: Pilot, conn: Connection, decision_id: int, user_id: int
 ) -> dict[str, Any]:
@@ -138,6 +159,10 @@ def approve(
     with pilot.engine.begin() as conn:
         row = _check(pilot, conn, decision_id, user_id)
         chosen = row["actions"] if actions is None else actions
+        for action in chosen:
+            error = limit_error(action, pilot.config)
+            if error:
+                raise DecisionError(422, error, action["type"])
         conn.execute(
             update(decision)
             .where(decision.c.id == decision_id)
@@ -163,7 +188,7 @@ def reject(pilot: Pilot, decision_id: int, user_id: int, reason: str) -> dict[st
     with pilot.engine.begin() as conn:
         row = _check(pilot, conn, decision_id, user_id)
         if not reason.strip():
-            raise DecisionError(422, NO_REASON)
+            raise DecisionError(422, NO_REASON, "reason")
         conn.execute(
             update(decision)
             .where(decision.c.id == decision_id)

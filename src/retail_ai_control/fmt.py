@@ -12,6 +12,11 @@ def pct(value: float) -> str:
     return f"{value:.1f}%".replace(".", ",").replace("-", MINUS)
 
 
+def number(value: float) -> str:
+    """Format a count without trailing zeros: ``35.7`` -> ``35,7``, ``8.0`` -> ``8``."""
+    return f"{value:g}".replace(".", ",").replace("-", MINUS)
+
+
 def signed_pct(value: float) -> str:
     """Format a change: ``-6.0`` -> ``−6,0%``, ``5.0`` -> ``+5,0%``."""
     text = pct(abs(value))

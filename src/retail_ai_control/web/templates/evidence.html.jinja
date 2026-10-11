@@ -1,0 +1,35 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+{% if item.deviation_id %}<p><a href="/deviations/{{ item.deviation_id }}">← К карточке решения</a></p>{% endif %}
+<h1>{{ title }}</h1>
+<p>Каждая цифра в карточке и в ответах AI получена этим запросом к витрине данных. Его можно повторить в дашборде.</p>
+<h2>SQL-запрос</h2>
+<pre><code>{{ item.sql }}</code></pre>
+{% if item.params %}
+<h2>Параметры</h2>
+<table>
+  <caption>Параметры запроса</caption>
+  <tbody>
+  {% for name, value in item.params.items() %}
+    <tr><th scope="row">{{ name }}</th><td>{{ value }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+<h2>Результат</h2>
+{% if item.rows %}
+<div class="overflow-auto">
+<table>
+  <caption>Строки результата: {{ item.rows | length }}</caption>
+  <thead><tr>{% for column in item.columns %}<th scope="col">{{ column }}</th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for row in item.rows %}
+    <tr>{% for column in item.columns %}<td>{{ row[column] }}</td>{% endfor %}</tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p>Запрос не вернул строк.</p>
+{% endif %}
+{% endblock %}

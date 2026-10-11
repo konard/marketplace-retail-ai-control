@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from sqlalchemy import func, select
 
-from retail_ai_control.fmt import money, pct
+from retail_ai_control.fmt import money, number, pct
 from retail_ai_control.mart import decision, reconciliation
 from retail_ai_control.workdays import business_days_between
 
@@ -93,7 +93,7 @@ class Scorecard:
 
 
 def _days(value: float) -> str:
-    return f"{value:g} раб. дн.".replace(".", ",")
+    return f"{number(value)} раб. дн."
 
 
 def scorecard(pilot: Pilot) -> Scorecard:

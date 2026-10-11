@@ -1,0 +1,39 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>{{ title }}</h1>
+{% for warning in warnings %}
+<p class="alert" role="status">{{ warning }}</p>
+{% endfor %}
+<form method="post" action="/ask">
+  <label for="question">Вопрос по данным</label>
+  <fieldset role="group">
+    <input id="question" name="question" type="text" placeholder="Например: почему упала маржа на Ozon?"
+      {% if question_error %}aria-invalid="true" aria-describedby="question-error"{% endif %}>
+    <button type="submit">Спросить</button>
+  </fieldset>
+  {% if question_error %}<small id="question-error" class="field-error">{{ question_error }}</small>{% endif %}
+</form>
+{% if rows %}
+<div class="overflow-auto">
+<table>
+  <caption>Открытые отклонения, сначала самые большие потери</caption>
+  <thead>
+    <tr><th scope="col">Товар</th><th scope="col">Канал</th><th scope="col">Что произошло</th><th scope="col" class="num">Потери</th><th scope="col">Статус</th></tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <th scope="row"><a href="/deviations/{{ row.id }}">{{ row.sku }}</a></th>
+      <td>{{ row.channel }}</td>
+      <td>{{ row.message }}</td>
+      <td class="num impact">{{ row.impact }}</td>
+      <td><span class="status {{ row.status | status_class }}">{{ row.status }}</span></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p>Отклонений нет.</p>
+{% endif %}
+{% endblock %}

@@ -19,7 +19,7 @@ from sqlalchemy.engine import Connection
 from retail_ai_control import queries, rules
 from retail_ai_control.config import CHANNEL_NAMES, Config
 from retail_ai_control.decisions import create_decision
-from retail_ai_control.fmt import pct
+from retail_ai_control.fmt import number, pct
 from retail_ai_control.mart import deviation, evidence
 from retail_ai_control.reconcile import OK, channel_status
 
@@ -201,9 +201,9 @@ def _stockout(conn: Connection, config: Config, analysis: Analysis) -> None:
     analysis.figure("stock", left, "latest_stock")
     analysis.actions = [{"type": "restock", "value": units}]
     analysis.explanation = (
-        f"Продажи {per_day:.1f} шт. в день, остаток {left} шт.: "
+        f"Продажи {number(per_day)} шт. в день, остаток {left} шт.: "
         f"чтобы хватило на {config.min_cover_days} дн., нужно {units} шт."
-    ).replace(".0 шт", " шт")
+    )
 
 
 def rule_analysis(
