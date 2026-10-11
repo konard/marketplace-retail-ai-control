@@ -31,6 +31,11 @@ Feature: Decision screens that follow human-AI interaction and usability guideli
         | Решение             |
       And the card shows a sparkline of the margin rate with a text alternative
 
+    Scenario: What the approver acts on stays together in one decision panel
+      When user 1 opens the decision card
+      Then the region "Решение по отклонению" holds the sections "Что сделать, Ожидаемый эффект, Решение"
+      And the rejection reason is hidden behind "Отклонить…" until it is needed
+
     Scenario: Every figure can be traced to its data
       When user 1 opens the decision card
       And user 1 follows the evidence link of the cause
@@ -54,6 +59,7 @@ Feature: Decision screens that follow human-AI interaction and usability guideli
       When user 1 rejects the proposal in the web app without a reason
       Then the page shows the error "Укажите причину отклонения" linked to the field "Причина отклонения"
       And the error summary at the top of the page links to the field "Причина отклонения"
+      And the rejection reason is open
       And the decision status is "proposed"
 
     Scenario: A user who is not an approver sees why they cannot decide

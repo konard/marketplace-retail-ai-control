@@ -108,6 +108,45 @@ def sections(world: World, datatable: list[list[str]]) -> None:
     assert found == [row["section"] for row in records(datatable)]
 
 
+@then(parsers.parse('the region "{name}" holds the sections "{names}"'))
+def region_sections(world: World, name: str, names: str) -> None:
+    region = next(
+        (
+            item
+            for item in page(world).select("main [aria-labelledby]")
+            if item.name in ("aside", "section")
+            and plain(page(world).find(id=item["aria-labelledby"])) == name
+        ),
+        None,
+    )
+    assert region is not None, f"no region {name!r}"
+    assert [plain(item) for item in region.select("h2")] == names.split(", ")
+
+
+def rejection(world: World) -> Tag:
+    """The disclosure that holds the rejection reason."""
+    field = labelled_field(world, "Причина отклонения")
+    details = field.find_parent("details")
+    assert isinstance(details, Tag), "the reason is not behind a disclosure"
+    return details
+
+
+@then(
+    parsers.parse('the rejection reason is hidden behind "{label}" until it is needed')
+)
+def reason_hidden(world: World, label: str) -> None:
+    details = rejection(world)
+    summary = details.find("summary")
+    assert isinstance(summary, Tag)
+    assert plain(summary) == label
+    assert not details.has_attr("open")
+
+
+@then("the rejection reason is open")
+def reason_open(world: World) -> None:
+    assert rejection(world).has_attr("open")
+
+
 @then("the card shows a sparkline of the margin rate with a text alternative")
 def sparkline(world: World) -> None:
     chart = page(world).select_one("svg.sparkline[role=img]")

@@ -21,3 +21,15 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .verdict { font-size: 1.25rem; }
 .error-summary { border: .2rem solid var(--pico-del-color); border-radius: var(--pico-border-radius); padding: 1rem 1.25rem 0; margin-bottom: var(--pico-spacing); }
 .error-summary a { color: var(--pico-del-color); font-weight: 600; }
+/* The decision card: analysis on the left, what the approver acts on in a
+   sticky panel on the right; one column on narrow screens. */
+.card-layout { display: grid; gap: var(--pico-block-spacing-horizontal); }
+@media (min-width: 1024px) {
+  .card-layout { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; }
+  .decision-panel { position: sticky; top: 1rem; }
+}
+.decision-panel { background: var(--pico-card-background-color); box-shadow: var(--pico-card-box-shadow); border-radius: var(--pico-border-radius); padding: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal); }
+.panel-title { font-weight: 600; color: var(--pico-muted-color); text-transform: uppercase; letter-spacing: .04em; font-size: .8rem; }
+input.action-value { max-width: 10rem; display: block; }
+.decision-panel button { width: auto; }
+.reject summary { color: var(--pico-secondary); }

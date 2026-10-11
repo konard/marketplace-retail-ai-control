@@ -9,6 +9,8 @@
 </hgroup>
 {{ error_summary(errors) }}
 
+<div class="card-layout">
+<div class="card-analysis">
 <section class="card-section" aria-labelledby="what">
   <h2 id="what">Что произошло</h2>
   <p>{{ card.deviation.message }} ({{ card.period }}). Потери: <strong class="impact">{{ card.deviation.impact | money }}</strong>.</p>
@@ -56,6 +58,10 @@
   <p>Анализ ещё не готов.</p>
   {% endif %}
 </section>
+</div>
+
+<section class="decision-panel" aria-labelledby="panel-title">
+<p id="panel-title" class="panel-title">Решение по отклонению</p>
 
 <section class="card-section" aria-labelledby="todo">
   <h2 id="todo">Что сделать</h2>
@@ -67,7 +73,7 @@
       {% if action.label and card.can_decide %}
       {% set key = "value_" ~ action.type %}
       <label for="{{ key }}">{{ action.label }}</label>
-      <input id="{{ key }}" name="{{ key }}" form="approve-form" type="text" inputmode="decimal" value="{{ action.value }}"
+      <input id="{{ key }}" class="action-value" name="{{ key }}" form="approve-form" type="text" inputmode="decimal" value="{{ action.value }}"
         aria-describedby="{{ key }}-hint{% if errors[key] %} {{ key }}-error{% endif %}"{% if errors[key] %} aria-invalid="true"{% endif %}>
       <small id="{{ key }}-hint">Оставьте поле пустым, чтобы убрать действие.</small>
       {% if errors[key] %}<small id="{{ key }}-error" class="field-error">{{ errors[key] }}</small>{% endif %}
@@ -97,12 +103,15 @@
   <form id="approve-form" method="post" action="/decisions/{{ decision.id }}/approve">
     <button type="submit">Утвердить</button>
   </form>
-  <form method="post" action="/decisions/{{ decision.id }}/reject">
-    <label for="reason">Причина отклонения</label>
-    <textarea id="reason" name="reason" rows="2"{% if errors.reason %} aria-invalid="true" aria-describedby="reason-error"{% endif %}>{{ reason }}</textarea>
-    {% if errors.reason %}<small id="reason-error" class="field-error">{{ errors.reason }}</small>{% endif %}
-    <button type="submit" class="secondary">Отклонить</button>
-  </form>
+  <details class="reject"{% if errors.reason %} open{% endif %}>
+    <summary>Отклонить…</summary>
+    <form method="post" action="/decisions/{{ decision.id }}/reject">
+      <label for="reason">Причина отклонения</label>
+      <textarea id="reason" name="reason" rows="2"{% if errors.reason %} aria-invalid="true" aria-describedby="reason-error"{% endif %}>{{ reason }}</textarea>
+      {% if errors.reason %}<small id="reason-error" class="field-error">{{ errors.reason }}</small>{% endif %}
+      <button type="submit" class="secondary">Отклонить</button>
+    </form>
+  </details>
   {% elif card.why_not %}
   <p class="notice">{{ card.why_not }}</p>
   {% endif %}
@@ -111,6 +120,9 @@
   {% endif %}
   {% if decision and decision.result_text %}<p><strong>Результат:</strong> {{ decision.result_text }}</p>{% endif %}
   {% if card.journal %}
+  <details>
+  <summary>История решения</summary>
+  <div class="overflow-auto">
   <table>
     <caption>Журнал решения</caption>
     <thead><tr><th scope="col">Дата</th><th scope="col">Этап</th><th scope="col">Пользователь</th><th scope="col">Комментарий</th></tr></thead>
@@ -120,6 +132,10 @@
     {% endfor %}
     </tbody>
   </table>
+  </div>
+  </details>
   {% endif %}
 </section>
+</section>
+</div>
 {% endblock %}
