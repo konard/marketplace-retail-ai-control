@@ -19,7 +19,7 @@ def dev_requirement(name: str) -> Requirement:
 
 
 def test_mypy_dependency_supports_configured_python_target() -> None:
-    """The dev extra must not install mypy versions that reject Python 3.9."""
+    """The dev extra must not install mypy versions that reject Python 3.10."""
     mypy = dev_requirement("mypy")
 
     assert "1.13.0" in mypy.specifier
