@@ -1,6 +1,8 @@
 {% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import error_summary %}
 {% block content %}
 <h1>{{ title }}</h1>
+{{ error_summary({"question": question_error} if question_error else {}) }}
 {% for warning in warnings %}
 <p class="alert" role="status">{{ warning }}</p>
 {% endfor %}

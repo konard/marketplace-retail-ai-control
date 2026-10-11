@@ -8,10 +8,17 @@ from tests.bdd.support import World
 
 scenarios("06_questions.feature")
 
+OWNER = 1
+
 
 @when(parsers.parse('the owner asks "{question}"'))
 def owner_asks(world: World, question: str) -> None:
     world.found["answer"] = world.pilot.ask(question)
+
+
+@when("the owner sends an empty question in the web app")
+def empty_question(world: World) -> None:
+    world.post("/ask", OWNER, {"question": " "})
 
 
 @then(parsers.parse('the answer is "{text}"'))

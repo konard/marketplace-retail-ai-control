@@ -35,3 +35,8 @@ Feature: Ask questions about the business in plain language
     When the owner asks "Почему упала маржа на Ozon?"
     Then the answer is "AI-ассистент сейчас недоступен. Данные — в дашборде."
     And the answer links to the dashboard
+
+  Scenario: An empty question is explained next to the field
+    When the owner sends an empty question in the web app
+    Then the page shows the error "Введите вопрос" linked to the field "Вопрос по данным"
+    And the error summary at the top of the page links to the field "Вопрос по данным"
