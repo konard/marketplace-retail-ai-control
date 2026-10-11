@@ -195,7 +195,12 @@ def run_followups(pilot: Pilot) -> list[dict[str, Any]]:
                 continue
         _store(pilot, row, dev, result)
         done.append(
-            {"decision_id": row["id"], "outcome": result.outcome, "text": result.text}
+            {
+                "decision_id": row["id"],
+                "outcome": result.outcome,
+                "text": result.text,
+                "result": result,
+            }
         )
     return done
 

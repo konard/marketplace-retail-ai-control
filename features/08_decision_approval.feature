@@ -17,8 +17,8 @@ Feature: Approve, edit or reject a proposed decision
 
     Scenario: The owner approves the proposal as it is
       When user 1 approves the proposal
-      Then the decision status is "approved"
-      And the decision was approved by user 1 without significant edits
+      Then the decision is approved by user 1 today
+      And the edit is not significant
       And the decision journal records "approved" by user 1
 
     Scenario: A user who is not an approver cannot approve
@@ -36,7 +36,7 @@ Feature: Approve, edit or reject a proposed decision
 
     Scenario Outline: The approver changes a value before approving
       When user 1 approves the proposal with the price change <value>
-      Then the decision status is "approved"
+      Then the decision is approved by user 1 today
       And the edit is <significance>
 
       Examples:
@@ -47,7 +47,7 @@ Feature: Approve, edit or reject a proposed decision
 
     Scenario: Removing an action is a significant edit
       When user 1 approves the proposal without the action "change price"
-      Then the decision status is "approved"
+      Then the decision is approved by user 1 today
       And the edit is significant
 
   Rule: A rejection always has a reason
