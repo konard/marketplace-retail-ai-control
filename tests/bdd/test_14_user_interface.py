@@ -8,10 +8,18 @@ from __future__ import annotations
 
 import re
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import Tag
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from tests.bdd.support import World, load_sales, number, records, text_of
+from tests.bdd.support import (
+    World,
+    labelled_field,
+    load_sales,
+    number,
+    page,
+    plain,
+    records,
+)
 
 scenarios("14_user_interface.feature")
 
@@ -21,30 +29,14 @@ CONCEPT_SALES = [
     ["2026-10-09", "2026-10-11", "SKU-1001", "ozon", "50", "44000.00", "6600.00", "4400.00", "9240.00"],
     ["2026-10-02", "2026-10-11", "SKU-1001", "wb", "50", "50000.00", "7500.00", "5000.00", "0.00"],
 ]  # fmt: skip
-PAGES = {"home page": "/", "team page": "/team", "scorecard page": "/scorecard"}
+PAGES = {
+    "home page": "/",
+    "decision journal": "/decisions",
+    "team page": "/team",
+    "scorecard page": "/scorecard",
+}
 QUOTED = re.compile(r'"([^"]+)"')
 FIELDS = "input:not([type=hidden]):not([type=submit]), textarea, select"
-
-
-def plain(soup: BeautifulSoup | Tag) -> str:
-    """Visible text with no-break spaces turned into spaces."""
-    return text_of(soup).replace(" ", " ")
-
-
-def page(world: World) -> BeautifulSoup:
-    """The page the user has open."""
-    assert world.page is not None, "no page is open"
-    return world.page
-
-
-def labelled_field(world: World, label: str) -> Tag:
-    """The form field a visible label points to."""
-    found = next(
-        item for item in page(world).select("label[for]") if plain(item) == label
-    )
-    field = page(world).find(id=found["for"])
-    assert isinstance(field, Tag), f"label {label!r} points to nothing"
-    return field
 
 
 @given("the deviation from the concept's example has a proposal")
@@ -62,7 +54,7 @@ def concept_proposal(world: World) -> None:
 @when(
     parsers.re(
         r"user (?P<user>\d+) opens the"
-        r" (?P<name>home page|decision card|team page|scorecard page)"
+        r" (?P<name>home page|decision card|decision journal|team page|scorecard page)"
     )
 )
 def opens(world: World, user: str, name: str) -> None:
@@ -154,16 +146,6 @@ def field_value(world: World, label: str, value: str) -> None:
 def button(world: World, name: str, negation: str | None) -> None:
     found = [item for item in page(world).select("button") if plain(item) == name]
     assert bool(found) is (negation is None)
-
-
-@then(parsers.parse('the page shows the error "{error}" linked to the field "{label}"'))
-def field_error(world: World, error: str, label: str) -> None:
-    field = labelled_field(world, label)
-    assert field.get("aria-invalid") == "true"
-    described = [
-        page(world).find(id=ref) for ref in str(field["aria-describedby"]).split()
-    ]
-    assert error in [plain(item) for item in described if isinstance(item, Tag)]
 
 
 @then(parsers.parse('the page language is "{lang}"'))

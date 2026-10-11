@@ -11,6 +11,7 @@ from collections.abc import Iterator
 from datetime import timedelta
 
 import pytest
+from bs4 import Tag
 from pytest_bdd import given, parsers, then, when
 from sqlalchemy import insert, select
 
@@ -30,8 +31,11 @@ from tests.bdd.support import (
     add_decision,
     add_deviation,
     day,
+    labelled_field,
     load_sales,
     number,
+    page,
+    plain,
     records,
 )
 
@@ -242,3 +246,13 @@ def journal_of(world: World) -> list[dict[str, object]]:
     """The journal entries of the current decision."""
     with world.pilot.engine.connect() as conn:
         return journal(conn, world.current_decision())
+
+
+@then(parsers.parse('the page shows the error "{error}" linked to the field "{label}"'))
+def field_error(world: World, error: str, label: str) -> None:
+    field = labelled_field(world, label)
+    assert field.get("aria-invalid") == "true"
+    described = [
+        page(world).find(id=ref) for ref in str(field["aria-describedby"]).split()
+    ]
+    assert error in [plain(item) for item in described if isinstance(item, Tag)]

@@ -13,7 +13,7 @@ from datetime import date
 from typing import Any, Optional
 
 import httpx
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from fastapi.testclient import TestClient
 from sqlalchemy import delete, insert, select
 
@@ -85,6 +85,27 @@ def actions_of(datatable: list[list[str]]) -> list[dict[str, Any]]:
 def text_of(soup: Any) -> str:
     """The visible text of an element with whitespace collapsed."""
     return " ".join(soup.get_text(" ").split())
+
+
+def plain(soup: BeautifulSoup | Tag) -> str:
+    """Visible text with no-break spaces turned into spaces."""
+    return text_of(soup).replace(" ", " ")
+
+
+def page(world: World) -> BeautifulSoup:
+    """The page the user has open."""
+    assert world.page is not None, "no page is open"
+    return world.page
+
+
+def labelled_field(world: World, label: str) -> Tag:
+    """The form field a visible label points to."""
+    found = next(
+        item for item in page(world).select("label[for]") if plain(item) == label
+    )
+    field = page(world).find(id=found["for"])
+    assert isinstance(field, Tag), f"label {label!r} points to nothing"
+    return field
 
 
 @dataclass

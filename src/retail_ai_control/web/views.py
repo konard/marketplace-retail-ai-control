@@ -22,6 +22,7 @@ from retail_ai_control.analysis import (
 from retail_ai_control.config import CHANNEL_NAMES, CHANNELS
 from retail_ai_control.decisions import NOT_APPROVER, PROPOSED, latest_for
 from retail_ai_control.execution import checklist_item, success_criterion
+from retail_ai_control.followup import ACHIEVED
 from retail_ai_control.fmt import day, money, number, pct
 from retail_ai_control.mart import decision, deviation, evidence, journal
 from retail_ai_control.reconcile import OK, channel_status
@@ -81,6 +82,9 @@ STATUS_CLASS = {
     "Отклонено": "status-off",
 }
 SPARK_WIDTH, SPARK_HEIGHT, SPARK_PAD = 240, 48, 4
+JOURNAL_WEEKS = 4
+NO_EFFECT = "—"
+PERIOD_ERROR = "Начало периода позже конца"
 
 
 def channel_name(channel: str) -> str:
@@ -331,6 +335,57 @@ def home_rows(pilot: Pilot) -> list[dict[str, Any]]:
         }
         for row in rows
     ]
+
+
+def journal_period(
+    pilot: Pilot, first: Optional[date], last: Optional[date]
+) -> tuple[date, date]:
+    """The period of the decision journal; by default the last four weeks."""
+    last = last or pilot.today() - timedelta(1)
+    return first or last - timedelta(7 * JOURNAL_WEEKS - 1), last
+
+
+def journal_rows(pilot: Pilot, first: date, last: date) -> list[dict[str, Any]]:
+    """Decisions taken in the period with their result, the newest first."""
+    with pilot.engine.connect() as conn:
+        rows = (
+            conn.execute(
+                select(decision, deviation.c.sku, deviation.c.channel)
+                .join(deviation, deviation.c.id == decision.c.deviation_id)
+                .where(decision.c.decided_on.between(first, last))
+                .order_by(decision.c.decided_on.desc(), decision.c.id.desc())
+            )
+            .mappings()
+            .all()
+        )
+    return [
+        {
+            "day": day(row["decided_on"]),
+            "deviation_id": row["deviation_id"],
+            "sku": row["sku"],
+            "channel": channel_name(row["channel"]),
+            "actions": [checklist_item(action) for action in row["actions"]],
+            "status": DECISION_STATUS.get(row["status"], row["status"]),
+            "effect": NO_EFFECT
+            if row["incremental_margin"] is None
+            else money(row["incremental_margin"]),
+            "measured": row["incremental_margin"] is not None,
+            "achieved": row["outcome"] == ACHIEVED,
+            "margin": row["incremental_margin"] or 0.0,
+        }
+        for row in rows
+    ]
+
+
+def journal_summary(rows: list[dict[str, Any]]) -> str:
+    """``Решений: 2 · эффект измерен: 2 · цель достигнута: 1 · ...``."""
+    parts = [
+        f"Решений: {len(rows)}",
+        f"эффект измерен: {sum(row['measured'] for row in rows)}",
+        f"цель достигнута: {sum(row['achieved'] for row in rows)}",
+        f"дополнительная маржа: {money(sum(row['margin'] for row in rows))}",
+    ]
+    return " · ".join(parts)
 
 
 def data_warnings(pilot: Pilot) -> list[str]:

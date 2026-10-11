@@ -70,8 +70,9 @@ Feature: Decision screens that follow human-AI interaction and usability guideli
       And the page has one main landmark and one level-one heading
 
       Examples:
-        | page           |
-        | home page      |
-        | decision card  |
-        | team page      |
-        | scorecard page |
+        | page             |
+        | home page        |
+        | decision card    |
+        | decision journal |
+        | team page        |
+        | scorecard page   |

@@ -25,7 +25,8 @@ definitions are in [`tests/bdd/`](../tests/bdd/), and the implementation is in
   replaced by fakes at the HTTP level. The production code runs unchanged.
 - Tags: `@data`, `@economics`, `@data-quality`, `@monitoring`, `@analysis`,
   `@ai`, `@owner`, `@digest`, `@decisions`, `@approval`, `@execution`,
-  `@bitrix24`, `@follow-up`, `@management`, `@pilot`, `@e2e`, `@ui`.
+  `@bitrix24`, `@follow-up`, `@management`, `@journal`, `@pilot`, `@e2e`,
+  `@ui`.
   Run one group with `pytest tests/bdd -m digest`.
 
 ## Traceability to the concept
@@ -43,6 +44,7 @@ definitions are in [`tests/bdd/`](../tests/bdd/), and the implementation is in
 | Execution: Bitrix24 task with a deadline | [09_task_execution](09_task_execution.feature) |
 | Control of the effect after 7 days | [10_follow_up](10_follow_up.feature) |
 | Managing the team by results | [11_team_performance](11_team_performance.feature) |
+| Weekly review of the decision journal and its effect | [15_decision_journal](15_decision_journal.feature) |
 | Pilot success criteria and the verdict | [12_pilot_scorecard](12_pilot_scorecard.feature) |
 | Reference example 2 through the whole loop | [13_end_to_end](13_end_to_end.feature) |
 | Screens and UX rules | [14_user_interface](14_user_interface.feature) |

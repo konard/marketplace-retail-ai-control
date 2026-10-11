@@ -1,0 +1,47 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<hgroup>
+  <h1>{{ title }}</h1>
+  <p>Что решили за период, кто исполняет и какой эффект получили.</p>
+</hgroup>
+<form method="get" action="/decisions" class="period" novalidate>
+  <fieldset class="grid">
+    {% for key, label, value in (("from", "С", first), ("to", "По", last)) %}
+    <div>
+      <label for="period-{{ key }}">{{ label }}</label>
+      <input id="period-{{ key }}" name="{{ key }}" type="date" value="{{ value }}"
+        {% if errors[key] %}aria-invalid="true" aria-describedby="period-{{ key }}-error"{% endif %}>
+      {% if errors[key] %}<small id="period-{{ key }}-error" class="field-error">{{ errors[key] }}</small>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="period-submit"><button type="submit" class="secondary">Показать</button></div>
+  </fieldset>
+</form>
+{% if not errors %}
+<p id="journal-summary" class="summary">{{ summary }}</p>
+{% endif %}
+{% if rows %}
+<div class="overflow-auto">
+<table id="journal">
+  <caption>Решения за период, сначала новые</caption>
+  <thead>
+    <tr><th scope="col">Дата</th><th scope="col">Товар</th><th scope="col">Канал</th><th scope="col">Что сделать</th><th scope="col">Статус</th><th scope="col" class="num">Эффект</th></tr>
+  </thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <td>{{ row.day }}</td>
+      <th scope="row"><a href="/deviations/{{ row.deviation_id }}">{{ row.sku }}</a></th>
+      <td>{{ row.channel }}</td>
+      <td>{{ row.actions | join("; ") }}</td>
+      <td><span class="status {{ row.status | status_class }}">{{ row.status }}</span></td>
+      <td class="num impact">{{ row.effect }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% elif not errors %}
+<p>Решений за период нет.</p>
+{% endif %}
+{% endblock %}

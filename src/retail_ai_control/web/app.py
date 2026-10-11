@@ -12,10 +12,11 @@ local demo, ``create_app(pilot, default_user=1)`` acts as user 1.
 from __future__ import annotations
 
 import hmac
+from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
-from fastapi import BackgroundTasks, FastAPI, Form, HTTPException, Request
+from fastapi import BackgroundTasks, FastAPI, Form, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -31,6 +32,7 @@ if TYPE_CHECKING:
 HERE = Path(__file__).parent
 USER_HEADER = "X-User-Id"
 NOT_A_NUMBER = "Введите число, например 5.0"
+NOT_A_DATE = "Введите дату, например 2026-10-12"
 
 
 def _number(text: str) -> float:
@@ -160,6 +162,36 @@ def create_app(pilot: Pilot, default_user: Optional[int] = None) -> FastAPI:
             "evidence.html.jinja",
             title=f"Данные: {item['name']}",
             item=item,
+        )
+
+    @app.get("/decisions", response_class=HTMLResponse)
+    def decision_journal(
+        request: Request,
+        first: str = Query("", alias="from"),
+        last: str = Query("", alias="to"),
+    ) -> HTMLResponse:
+        errors: dict[str, str] = {}
+        dates = {}
+        for key, text in (("from", first), ("to", last)):
+            try:
+                dates[key] = date.fromisoformat(text) if text else None
+            except ValueError:
+                errors[key], dates[key] = NOT_A_DATE, None
+        start, end = views.journal_period(pilot, dates["from"], dates["to"])
+        if not errors and start > end:
+            errors["from"] = views.PERIOD_ERROR
+        rows = [] if errors else views.journal_rows(pilot, start, end)
+        return page(
+            request,
+            "journal.html.jinja",
+            422 if errors else 200,
+            title="Журнал решений",
+            nav="journal",
+            first=first or start.isoformat(),
+            last=last or end.isoformat(),
+            errors=errors,
+            rows=rows,
+            summary=views.journal_summary(rows),
         )
 
     @app.get("/team", response_class=HTMLResponse)
