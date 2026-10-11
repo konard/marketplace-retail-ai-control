@@ -8,7 +8,7 @@ from datetime import date
 from bs4 import BeautifulSoup
 from fastapi.testclient import TestClient
 
-from retail_ai_control.config import Config
+from retail_ai_control.config import Config, Person
 from retail_ai_control.demo import load_demo
 from retail_ai_control.pilot import Pilot
 from retail_ai_control.web import create_app
@@ -17,6 +17,10 @@ config = Config(
     database_url="sqlite://",
     margin_plan_pct={"SKU-1001:ozon": 15.0},
     approvers=[1, 7],
+    channel_managers={
+        "ozon": Person(17, "Анна Смирнова"),
+        "wb": Person(18, "Олег Петров"),
+    },
 )
 pilot = Pilot(config, today=lambda: date(2026, 10, 12))
 print("deviations:", load_demo(pilot))
@@ -28,6 +32,8 @@ for path in [
     "/deviations/1",
     "/deviations/2",
     "/evidence/1",
+    "/deviations/3",
+    "/decisions",
     "/team",
     "/scorecard",
 ]:

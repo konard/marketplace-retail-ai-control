@@ -26,7 +26,7 @@ definitions are in [`tests/bdd/`](../tests/bdd/), and the implementation is in
 - Tags: `@data`, `@economics`, `@data-quality`, `@monitoring`, `@analysis`,
   `@ai`, `@owner`, `@digest`, `@decisions`, `@approval`, `@execution`,
   `@bitrix24`, `@follow-up`, `@management`, `@journal`, `@pilot`, `@e2e`,
-  `@ui`.
+  `@ui`, `@demo`.
   Run one group with `pytest tests/bdd -m digest`.
 
 ## Traceability to the concept
@@ -48,3 +48,4 @@ definitions are in [`tests/bdd/`](../tests/bdd/), and the implementation is in
 | Pilot success criteria and the verdict | [12_pilot_scorecard](12_pilot_scorecard.feature) |
 | Reference example 2 through the whole loop | [13_end_to_end](13_end_to_end.feature) |
 | Screens and UX rules | [14_user_interface](14_user_interface.feature) |
+| Trying the loop on demo data before the systems are connected | [16_demo](16_demo.feature) |

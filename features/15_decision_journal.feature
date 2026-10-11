@@ -14,7 +14,7 @@ Feature: Weekly review of the decision journal
       | SKU-1002 | wb      | 2026-10-13 | evaluated   | 7           | set ad share 9.0%   | not achieved       | -1200.00           |
       | SKU-1003 | ozon    | 2026-10-20 | in progress | 1           | change price +5.0%  |                    |                    |
       | SKU-1004 | wb      | 2026-10-21 | rejected    | 1           | change price -5.0%  |                    |                    |
-      | SKU-1005 | ozon    | 2026-09-14 | closed      | 1           | restock 300         | partially achieved | 900.00             |
+      | SKU-1005 | ozon    | 2026-09-14 | evaluated   | 1           | restock 300         | partially achieved | 900.00             |
 
   Rule: The journal shows the decisions of a period, newest first
 

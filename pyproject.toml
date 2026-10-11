@@ -157,6 +157,7 @@ markers = [
     "follow-up: effect measurement",
     "management: team performance and the decision journal",
     "journal: weekly review of the decision journal",
+    "demo: demo data for every screen",
     "pilot: pilot scorecard",
     "e2e: the full loop",
     "ui: web screens",
