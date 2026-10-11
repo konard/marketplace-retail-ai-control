@@ -6,7 +6,9 @@ the concept is a setting, so the owner can tune the loop without code.
 
 from __future__ import annotations
 
+import os
 import sys
+from collections.abc import Mapping
 from dataclasses import dataclass, field, fields
 from datetime import date
 from pathlib import Path
@@ -17,6 +19,16 @@ if sys.version_info >= (3, 11):  # pragma: no cover - depends on the interpreter
 else:  # pragma: no cover - depends on the interpreter
     import tomli as tomllib
 
+SECRETS = {
+    "RETAIL_AI_WB_TOKEN": ("", "wb_token"),
+    "RETAIL_AI_OZON_API_KEY": ("", "ozon_api_key"),
+    "RETAIL_AI_ONEC_PASSWORD": ("onec", "password"),
+    "RETAIL_AI_LLM_API_KEY": ("llm", "api_key"),
+    "RETAIL_AI_BITRIX_WEBHOOK_URL": ("", "bitrix_webhook_url"),
+    "RETAIL_AI_BITRIX_APPLICATION_TOKEN": ("", "bitrix_application_token"),
+    "RETAIL_AI_METABASE_SECRET": ("", "metabase_secret"),
+    "RETAIL_AI_DATABASE_URL": ("", "database_url"),
+}
 CHANNELS = ("wb", "ozon")
 CHANNEL_NAMES = {"wb": "WB", "ozon": "Ozon"}
 
@@ -139,10 +151,19 @@ def _build(cls: Any, data: dict[str, Any]) -> Any:
     return cls(**data)
 
 
-def load_config(path: Path) -> Config:
-    """Read the settings from a TOML file (see ``examples/pilot.toml``)."""
+def load_config(path: Path, environ: Optional[Mapping[str, str]] = None) -> Config:
+    """Read the settings from a TOML file (see ``examples/pilot.toml``).
+
+    Tokens and passwords come from the environment variables in
+    :data:`SECRETS`, so the file can be kept in version control.
+    """
     with path.open("rb") as handle:
         data: dict[str, Any] = tomllib.load(handle)
+    env = os.environ if environ is None else environ
+    for variable, (section, name) in SECRETS.items():
+        if env.get(variable):
+            target = data.setdefault(section, {}) if section else data
+            target[name] = env[variable]
     data["onec"] = _build(OneCSettings, data.get("onec", {}))
     data["llm"] = _build(LLMSettings, data.get("llm", {}))
     managers = data.get("channel_managers", {})
