@@ -42,4 +42,5 @@ Feature: Weekly review of the decision journal
     Scenario: The start of the period is after its end
       When the owner opens the decision journal from 2026-10-18 to 2026-10-12
       Then the page shows the error "Начало периода позже конца" linked to the field "С"
+      And the error summary at the top of the page links to the field "С"
       And the journal is empty

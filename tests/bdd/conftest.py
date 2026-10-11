@@ -256,3 +256,16 @@ def field_error(world: World, error: str, label: str) -> None:
         page(world).find(id=ref) for ref in str(field["aria-describedby"]).split()
     ]
     assert error in [plain(item) for item in described if isinstance(item, Tag)]
+
+
+@then(
+    parsers.parse(
+        'the error summary at the top of the page links to the field "{label}"'
+    )
+)
+def error_summary(world: World, label: str) -> None:
+    summary = page(world).select_one("main [role=alert]")
+    assert summary is not None, "the page has no error summary"
+    assert summary.find_previous("h2") is None, "the summary is not at the top"
+    field = labelled_field(world, label)
+    assert summary.select(f'a[href="#{field["id"]}"]'), "no link to the field"

@@ -1,4 +1,5 @@
 {% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import error_summary %}
 {% set decision = card.decision %}
 {% block content %}
 <p><a href="/">← К отклонениям</a></p>
@@ -6,7 +7,7 @@
   <h1>{{ title }}</h1>
   <p>{{ card.deviation.message }} · <span class="status {{ card.status | status_class }}">{{ card.status }}</span></p>
 </hgroup>
-{% if errors.decision %}<p class="alert" role="alert">{{ errors.decision }}</p>{% endif %}
+{{ error_summary(errors) }}
 
 <section class="card-section" aria-labelledby="what">
   <h2 id="what">Что произошло</h2>

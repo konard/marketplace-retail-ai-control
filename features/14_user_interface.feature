@@ -53,6 +53,7 @@ Feature: Decision screens that follow human-AI interaction and usability guideli
     Scenario: A rejection without a reason shows the error next to the field
       When user 1 rejects the proposal in the web app without a reason
       Then the page shows the error "Укажите причину отклонения" linked to the field "Причина отклонения"
+      And the error summary at the top of the page links to the field "Причина отклонения"
       And the decision status is "proposed"
 
     Scenario: A user who is not an approver sees why they cannot decide

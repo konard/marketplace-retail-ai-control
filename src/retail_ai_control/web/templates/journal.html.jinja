@@ -1,9 +1,11 @@
 {% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import error_summary %}
 {% block content %}
 <hgroup>
   <h1>{{ title }}</h1>
   <p>Что решили за период, кто исполняет и какой эффект получили.</p>
 </hgroup>
+{{ error_summary(errors, "period-") }}
 <form method="get" action="/decisions" class="period" novalidate>
   <fieldset class="grid">
     {% for key, label, value in (("from", "С", first), ("to", "По", last)) %}

@@ -19,3 +19,5 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .alert { border-left: .25rem solid var(--pico-del-color); padding-left: 1rem; }
 .notice { border-left: .25rem solid var(--pico-muted-border-color); padding-left: 1rem; color: var(--pico-muted-color); }
 .verdict { font-size: 1.25rem; }
+.error-summary { border: .2rem solid var(--pico-del-color); border-radius: var(--pico-border-radius); padding: 1rem 1.25rem 0; margin-bottom: var(--pico-spacing); }
+.error-summary a { color: var(--pico-del-color); font-weight: 600; }
