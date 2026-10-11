@@ -42,7 +42,7 @@ DECISION_STATUS = {
     "approved": "Утверждено",
     "in progress": "В работе",
     "done": "Выполнено, ждём эффект",
-    "evaluated": "Эффект измерен",
+    "evaluated": "Цель не достигнута",
     "closed": "Цель достигнута",
     "rejected": "Отклонено",
 }
@@ -76,7 +76,7 @@ STATUS_CLASS = {
     "Утверждено": "status-work",
     "В работе": "status-work",
     "Выполнено, ждём эффект": "status-work",
-    "Эффект измерен": "status-done",
+    "Цель не достигнута": "status-wait",
     "Цель достигнута": "status-done",
     "Закрыто": "status-done",
     "Отклонено": "status-off",

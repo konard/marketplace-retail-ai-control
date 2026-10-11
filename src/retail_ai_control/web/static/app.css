@@ -10,7 +10,7 @@
 .source-label { display: inline-block; padding: .1rem .5rem; border-radius: .25rem; background: var(--pico-secondary-background); color: var(--pico-secondary-inverse); font-size: .8em; }
 .impact { font-variant-numeric: tabular-nums; white-space: nowrap; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-.sparkline { display: block; max-width: 100%; height: auto; }
+.sparkline { display: block; width: 100%; max-width: 28rem; height: auto; }
 .sparkline polyline { fill: none; stroke: var(--pico-primary); stroke-width: 2; }
 .sparkline line { stroke: var(--pico-muted-color); stroke-dasharray: 4 3; }
 .sparkline circle { fill: var(--pico-primary); }
@@ -33,3 +33,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 input.action-value { max-width: 10rem; display: block; }
 .decision-panel button { width: auto; }
 .reject summary { color: var(--pico-secondary); }
+/* The period of the journal: the button sits on the line of the fields. */
+.period .grid { align-items: end; }
+.period-submit button { width: auto; margin-bottom: var(--pico-spacing); }
+.summary { font-weight: 600; }
