@@ -111,7 +111,7 @@ def row_link(world: World, sku: str) -> None:
         if plain(item) == sku
     )
     with world.pilot.engine.connect() as conn:
-        deviation_id = conn.execute(
+        deviation_id: int = conn.execute(
             select(deviation.c.id).where(deviation.c.sku == sku)
         ).scalar_one()
     assert link["href"] == f"/deviations/{deviation_id}"
