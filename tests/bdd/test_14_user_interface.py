@@ -110,14 +110,9 @@ def sections(world: World, datatable: list[list[str]]) -> None:
 
 @then(parsers.parse('the region "{name}" holds the sections "{names}"'))
 def region_sections(world: World, name: str, names: str) -> None:
-    region = next(
-        (
-            item
-            for item in page(world).select("main [aria-labelledby]")
-            if item.name in ("aside", "section")
-            and plain(page(world).find(id=item["aria-labelledby"])) == name
-        ),
-        None,
+    names_of = {plain(label): label["id"] for label in page(world).select("main [id]")}
+    region = page(world).select_one(
+        f'main section[aria-labelledby="{names_of.get(name)}"]'
     )
     assert region is not None, f"no region {name!r}"
     assert [plain(item) for item in region.select("h2")] == names.split(", ")
