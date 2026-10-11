@@ -12,23 +12,23 @@ Feature: Collect sales, costs, stock and advertising data into one data mart
 
   Rule: Every source is converted to daily facts per SKU and channel
 
-    Scenario: Load a Wildberries realization report
-      Given the Wildberries realization report contains:
-        | rr_dt      | nm_id  | doc_type_name | quantity | retail_amount | ppvz_for_pay | delivery_rub |
-        | 2026-10-11 | 111001 | Продажа       | 2        | 2000.00       | 1700.00      | 200.00       |
-        | 2026-10-11 | 111001 | Продажа       | 1        | 1000.00       | 850.00       | 100.00       |
-        | 2026-10-11 | 111001 | Возврат       | 1        | 1000.00       | 850.00       | 50.00        |
+    Scenario: Load the Wildberries sales report details
+      Given the Wildberries sales report details contain:
+        | rrDate     | nmId   | docTypeName | quantity | retailAmount | forPay  | deliveryService |
+        | 2026-10-11 | 111001 | Продажа     | 2        | 2000.00      | 1700.00 | 200.00          |
+        | 2026-10-11 | 111001 | Продажа     | 1        | 1000.00      | 850.00  | 100.00          |
+        | 2026-10-11 | 111001 | Возврат     | 1        | 1000.00      | 850.00  | 50.00           |
       When the data is synchronized for 2026-10-11
       Then the data mart contains for "SKU-1001" on "wb" on 2026-10-11:
         | units | revenue | commission | logistics |
         | 2     | 2000.00 | 300.00     | 350.00    |
 
-    Scenario: Load Ozon finance transactions
-      Given the Ozon finance transactions contain:
-        | operation_date | operation_type                    | sku    | accruals_for_sale | sale_commission | services_total |
-        | 2026-10-11     | OperationAgentDeliveredToCustomer | 222001 | 880.00            | -132.00         | -88.00         |
-        | 2026-10-11     | OperationAgentDeliveredToCustomer | 222001 | 880.00            | -132.00         | -88.00         |
-        | 2026-10-11     | ClientReturnAgentOperation        | 222001 | -880.00           | 132.00          | -40.00         |
+    Scenario: Load the Ozon accruals for the day
+      Given the Ozon accruals for the day contain:
+        | date       | accrued_category | unit_number   | sku    | sale_amount | commission | delivery_total |
+        | 2026-10-11 | POSTING          | 0001-0001-1   | 222001 | 880.00      | -132.00    | -88.00         |
+        | 2026-10-11 | POSTING          | 0001-0002-1   | 222001 | 880.00      | -132.00    | -88.00         |
+        | 2026-10-11 | POSTING          | 0001-0001-1   | 222001 | -880.00     | 132.00     | -40.00         |
       When the data is synchronized for 2026-10-11
       Then the data mart contains for "SKU-1001" on "ozon" on 2026-10-11:
         | units | revenue | commission | logistics |
@@ -62,13 +62,13 @@ Feature: Collect sales, costs, stock and advertising data into one data mart
   Rule: Reloading is safe and data problems are visible, never silent
 
     Scenario: A recalculated marketplace report replaces the earlier figures
-      Given the Wildberries realization report contains:
-        | rr_dt      | nm_id  | doc_type_name | quantity | retail_amount | ppvz_for_pay | delivery_rub |
-        | 2026-10-11 | 111001 | Продажа       | 1        | 1000.00       | 850.00       | 100.00       |
+      Given the Wildberries sales report details contain:
+        | rrDate     | nmId   | docTypeName | quantity | retailAmount | forPay  | deliveryService |
+        | 2026-10-11 | 111001 | Продажа     | 1        | 1000.00      | 850.00  | 100.00          |
       And the data was synchronized for 2026-10-11
       When the marketplace recalculates the report to:
-        | rr_dt      | nm_id  | doc_type_name | quantity | retail_amount | ppvz_for_pay | delivery_rub |
-        | 2026-10-11 | 111001 | Продажа       | 3        | 3000.00       | 2550.00      | 300.00       |
+        | rrDate     | nmId   | docTypeName | quantity | retailAmount | forPay  | deliveryService |
+        | 2026-10-11 | 111001 | Продажа     | 3        | 3000.00      | 2550.00 | 300.00          |
       And the data is synchronized for 2026-10-11
       Then the data mart contains for "SKU-1001" on "wb" on 2026-10-11:
         | units | revenue |
@@ -76,16 +76,16 @@ Feature: Collect sales, costs, stock and advertising data into one data mart
       And the data mart has exactly 1 fact for "SKU-1001" on "wb" on 2026-10-11
 
     Scenario: Rows for unknown marketplace IDs go to the data quality report
-      Given the Wildberries realization report contains:
-        | rr_dt      | nm_id  | doc_type_name | quantity | retail_amount | ppvz_for_pay | delivery_rub |
-        | 2026-10-11 | 999999 | Продажа       | 1        | 500.00        | 400.00       | 50.00        |
+      Given the Wildberries sales report details contain:
+        | rrDate     | nmId   | docTypeName | quantity | retailAmount | forPay  | deliveryService |
+        | 2026-10-11 | 999999 | Продажа     | 1        | 500.00       | 400.00  | 50.00           |
       When the data is synchronized for 2026-10-11
       Then the data quality report lists unmapped ID "999999" on "wb" with revenue 500.00
 
     Scenario: A failing source does not stop the other sources
-      Given the Wildberries realization report contains:
-        | rr_dt      | nm_id  | doc_type_name | quantity | retail_amount | ppvz_for_pay | delivery_rub |
-        | 2026-10-11 | 111001 | Продажа       | 1        | 1000.00       | 850.00       | 100.00       |
+      Given the Wildberries sales report details contain:
+        | rrDate     | nmId   | docTypeName | quantity | retailAmount | forPay  | deliveryService |
+        | 2026-10-11 | 111001 | Продажа     | 1        | 1000.00      | 850.00  | 100.00          |
       And the Ozon API answers with HTTP 503
       When the data is synchronized for 2026-10-11
       Then the sync report shows "ozon" as failed with "503"

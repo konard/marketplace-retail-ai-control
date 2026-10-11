@@ -34,18 +34,21 @@ Feature: Approve, edit or reject a proposed decision
 
   Rule: Edits are allowed; large edits are counted for the pilot scorecard
 
-    Scenario Outline: The approver edits the actions before approving
-      When user 1 approves the proposal with the actions:
-        | action   | value   |
-        | <action> | <value> |
+    Scenario Outline: The approver changes a value before approving
+      When user 1 approves the proposal with the price change <value>
       Then the decision status is "approved"
       And the edit is <significance>
 
       Examples:
-        | action       | value | significance    |
-        | change price | +3.0% | not significant |
-        | change price | +2.0% | significant     |
-        | set ad share | 9.0%  | significant     |
+        | value | significance    |
+        | +5.0% | not significant |
+        | +3.0% | not significant |
+        | +2.0% | significant     |
+
+    Scenario: Removing an action is a significant edit
+      When user 1 approves the proposal without the action "change price"
+      Then the decision status is "approved"
+      And the edit is significant
 
   Rule: A rejection always has a reason
 

@@ -25,7 +25,7 @@ Feature: Turn an approved decision into a Bitrix24 task and track it
         | CREATED_BY     | 1                                                |
         | DEADLINE       | 2026-10-14T19:00:00+03:00                        |
       And the task description contains "Критерий успеха: маржа ≥ 12,0% при падении продаж ≤ 10,0% за 7 дней"
-      And the task description contains "https://ai.example.ru/decisions/1"
+      And the task description contains "https://ai.example.ru/deviations/1"
       And Bitrix24 receives "task.checklistitem.add" for each action:
         | title                           |
         | Снизить долю рекламы до 9,0%    |
