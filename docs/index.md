@@ -3,6 +3,9 @@
 The main result of this repository is the
 [concept of an AI management loop](concept/README.md) for a Wildberries and
 Ozon retailer (in Russian), with its [sources appendix](concept/sources.md).
+The pilot is implemented in `src/retail_ai_control`: see its
+[architecture](architecture/README.md) and the
+[UX guidelines of its screens](ux/README.md).
 
 The API pages below document the template example package `my-package`,
 generated from the
@@ -14,6 +17,8 @@ generated from the
 
 concept/README
 concept/sources
+architecture/README
+ux/README
 api
 preview-regeneration
 ```

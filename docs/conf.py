@@ -35,6 +35,10 @@ extensions = [
 
 # Render ```mermaid fences in Markdown (the concept's diagrams) as diagrams.
 myst_fence_as_directive = ["mermaid"]
+# Each diagram keeps its own proportions instead of a fixed 500 px box; the
+# neutral theme leaves colour to the classes defined in the diagrams.
+mermaid_height = "auto"
+mermaid_light_theme = "neutral"
 
 autosummary_generate = True
 autodoc_typehints = "description"

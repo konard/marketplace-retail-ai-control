@@ -19,10 +19,17 @@ no-code автоматизации «триггер → условие → де�
 
 ```mermaid
 flowchart LR
-  M["Мониторинг: Flow-триггер «остаток = 0» или отчёт по расписанию"] -->|сигнал в Slack| A["Анализ: вопрос Sidekick → отчёт ShopifyQL"]
-  A -->|черновик Flow| D["Решение: человек проверяет и активирует"]
-  D -->|активный workflow| E["Исполнение: Flow скрывает товар, ставит теги, уведомляет"]
-  E -->|новые данные| C["Контроль: повторный отчёт"]
+  classDef mon fill:#e8f1fb,stroke:#0b5394,color:#0b2a4a
+  classDef ana fill:#fff4e5,stroke:#8a4b00,color:#4a2800
+  classDef dec fill:#f3e8fd,stroke:#6a1b9a,color:#3b0f57
+  classDef exe fill:#eaf5ec,stroke:#1d6b2f,color:#123d1c
+  classDef ctl fill:#f4f4f4,stroke:#5c5c5c,color:#333333
+  M["<b>Мониторинг</b><br/>триггер Flow «остаток = 0»<br/>или отчёт по расписанию"]:::mon
+  A["<b>Анализ</b><br/>вопрос Sidekick →<br/>отчёт ShopifyQL"]:::ana
+  D["<b>Решение</b><br/>человек проверяет<br/>и активирует"]:::dec
+  E["<b>Исполнение</b><br/>Flow скрывает товар,<br/>ставит теги, уведомляет"]:::exe
+  C["<b>Контроль</b><br/>повторный отчёт"]:::ctl
+  M -->|сигнал в Slack| A -->|черновик Flow| D -->|активный workflow| E -->|новые данные| C
   C -.->|эффекта нет| A
 ```
 
@@ -52,10 +59,17 @@ AI-анализа цифр в BI вендор не заявляет.
 
 ```mermaid
 flowchart LR
-  M["Мониторинг: дашборд BI Конструктора"] -->|человек замечает отклонение| A["Анализ: вручную, AI — только по звонкам"]
-  A --> D["Решение: руководитель"]
-  D -->|задача с чек-листом от BitrixGPT| E["Исполнение: задача, робот по стадии"]
-  E -->|задача закрыта → триггер| C["Контроль: стадия сделки, отчёт по задачам"]
+  classDef mon fill:#e8f1fb,stroke:#0b5394,color:#0b2a4a
+  classDef ana fill:#fff4e5,stroke:#8a4b00,color:#4a2800
+  classDef dec fill:#f3e8fd,stroke:#6a1b9a,color:#3b0f57
+  classDef exe fill:#eaf5ec,stroke:#1d6b2f,color:#123d1c
+  classDef ctl fill:#f4f4f4,stroke:#5c5c5c,color:#333333
+  M["<b>Мониторинг</b><br/>дашборд<br/>BI Конструктора"]:::mon
+  A["<b>Анализ</b><br/>вручную; AI —<br/>только по звонкам"]:::ana
+  D["<b>Решение</b><br/>руководитель"]:::dec
+  E["<b>Исполнение</b><br/>задача с чек-листом,<br/>робот по стадии"]:::exe
+  C["<b>Контроль</b><br/>стадия сделки,<br/>отчёт по задачам"]:::ctl
+  M -->|человек замечает| A --> D -->|чек-лист от BitrixGPT| E -->|задача закрыта| C
   C -.-> M
 ```
 
@@ -78,13 +92,21 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  S["1С · Битрикс24 · WB · Ozon · аналитика"] -->|Python-коннекторы| P[("PostgreSQL: SKU × канал × день")]
-  P --> M["Metabase: алерты"]
-  M -->|webhook| A["LLM-агент, tool calling"]
+  classDef mon fill:#e8f1fb,stroke:#0b5394,color:#0b2a4a
+  classDef ana fill:#fff4e5,stroke:#8a4b00,color:#4a2800
+  classDef dec fill:#f3e8fd,stroke:#6a1b9a,color:#3b0f57
+  classDef exe fill:#eaf5ec,stroke:#1d6b2f,color:#123d1c
+  classDef ctl fill:#f4f4f4,stroke:#5c5c5c,color:#333333
+  S["<b>Источники</b><br/>1С · Битрикс24<br/>WB · Ozon · аналитика"]:::ctl
+  P[("<b>PostgreSQL</b><br/>SKU × канал × день")]:::exe
+  M["<b>Metabase</b><br/>алерты"]:::mon
+  A["<b>LLM-агент</b><br/>tool calling"]:::ana
+  R(["<b>Руководитель</b><br/>Битрикс24"]):::dec
+  E(["<b>Исполнитель</b><br/>задача"]):::dec
+  S -->|Python-коннекторы| P --> M -->|webhook| A
   P -->|SQL, чтение| A
-  A -->|предложение| R["Руководитель, Битрикс24"]
-  R -->|tasks.task.add| E["Задача исполнителю"]
-  E -->|через N дней| A
+  A -->|предложение| R -->|tasks.task.add| E
+  E -.->|через 7 дней| A
 ```
 
 **Купить или собрать.**

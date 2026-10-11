@@ -210,3 +210,6 @@ __marimo__/
 
 # Playwright MCP browser captures
 .playwright-mcp/
+
+# Diagram screenshots from experiments/screenshot_diagrams.js
+experiments/diagrams/
