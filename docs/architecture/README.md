@@ -2,9 +2,10 @@
 
 This page shows how the pilot from the [concept](../concept/README.md) is
 built: what we buy, what we write, how one morning runs and how a decision
-moves from a proposal to a measured effect. The requirements are the
-[Gherkin features](https://github.com/konard/marketplace-retail-ai-control/tree/main/features);
-every scenario is an automated test.
+moves from a proposal to a measured effect. The requirements are the 16
+Gherkin features in `features/`, for example
+[the whole loop end to end](../../features/13_end_to_end.feature); every
+scenario is an automated test.
 
 The diagrams use one colour per kind of element:
 
@@ -287,8 +288,9 @@ margin per SKU × channel × day.
 ## 6. Deployment
 
 The proposed deployment for the pilot: one small virtual machine inside the
-company network is enough for 30–50 SKUs. The tokens of the marketplaces and
-Bitrix24 live only in the settings file on this machine.
+company network is enough for 30–50 SKUs. The tokens of the marketplaces,
+1C, Bitrix24 and the LLM are environment variables of the service on this
+machine and never appear in the settings file or the database.
 
 ```mermaid
 flowchart TB
@@ -307,9 +309,9 @@ flowchart TB
     PG[("<b>PostgreSQL</b><br/>data mart")]:::data
   end
 
-  subgraph Outside["Internet, HTTPS"]
+  subgraph Outside["External services, HTTPS"]
     LLM["<b>LLM API</b><br/>or a model on own GPU"]:::ai
-    API["<b>WB · Ozon · 1C · Bitrix24</b><br/>REST, tokens in pilot.toml"]:::ext
+    API["<b>WB · Ozon · 1C · Bitrix24</b><br/>REST, tokens from the environment"]:::ext
   end
 
   U --> SSO --> APP
@@ -323,7 +325,9 @@ flowchart TB
   style Outside fill:#f8fafc,stroke:#c8d1dc
 ```
 
-The settings are one TOML file (`pilot.toml`): tokens, the list of approvers,
-the manager of each channel, margin plans and action limits. Run
+The settings are one TOML file (`pilot.toml`): the list of approvers, the
+manager of each channel, margin plans, rule thresholds and action limits;
+[`examples/pilot.toml`](../../examples/pilot.toml)
+lists every setting and the environment variables for the tokens. Run
 `retail-ai-control demo` and `retail-ai-control serve --user 1` to see every
 screen on demo data without connecting any system.

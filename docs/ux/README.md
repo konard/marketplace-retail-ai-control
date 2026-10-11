@@ -4,7 +4,7 @@ The screens serve one job: an owner or a manager sees what went wrong,
 checks why, and decides in a minute, without trusting the AI blindly. We did
 not invent rules for this; we follow the most widely used guidelines for
 human-AI interaction, usability and accessibility, and we test each rule as a
-scenario in [`features/14_user_interface.feature`](https://github.com/konard/marketplace-retail-ai-control/blob/main/features/14_user_interface.feature)
+scenario in [`features/14_user_interface.feature`](../../features/14_user_interface.feature)
 and its neighbours.
 
 ## Sources
