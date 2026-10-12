@@ -1,0 +1,70 @@
+# Settings of the pilot. Tokens and passwords are read from environment
+# variables (RETAIL_AI_WB_TOKEN, RETAIL_AI_OZON_API_KEY, RETAIL_AI_ONEC_PASSWORD,
+# RETAIL_AI_LLM_API_KEY, RETAIL_AI_BITRIX_WEBHOOK_URL,
+# RETAIL_AI_BITRIX_APPLICATION_TOKEN, RETAIL_AI_METABASE_SECRET), so keep
+# them out of this file.
+#
+# Try it without any external system:
+#   retail-ai-control --config examples/pilot.toml demo
+#   retail-ai-control --config examples/pilot.toml serve --user 1
+
+database_url = "sqlite:///retail_ai_control.db"
+
+# Deviation rules
+margin_days = 3
+baseline_days = 7
+ad_share_limit_pct = 15.0
+sales_drop_pct = 20.0
+min_cover_days = 14
+
+# Proposals and their limits
+price_change_max_pct = 10.0
+price_step_pct = 5.0
+target_gap_pp = 3.0
+guardrail_drop_pct = 10.0
+followup_days = 7
+
+# Tasks: due in 2 business days at 19:00 Moscow time
+task_business_days = 2
+task_hour = 19
+timezone = "Europe/Moscow"
+holidays = [2026-11-04, 2026-12-31]
+
+# Data quality and the pilot criteria
+reconciliation_tolerance_pct = 2.0
+recommendations_from = 2026-10-05
+pilot_cost = 180000.0
+approval_share_target_pct = 60.0
+lead_time_target_days = 2
+
+# Bitrix24 user IDs
+approvers = [1, 7]
+digest_dialog = "chat15"
+web_url = "https://control.example.ru"
+dashboard_url = "https://metabase.example.ru/dashboard/1"
+
+# Planned margin rate: "SKU:channel", "SKU" or "*:channel"
+[margin_plan_pct]
+"SKU-1001:ozon" = 15.0
+"*:wb" = 20.0
+
+[channel_managers.ozon]
+user_id = 17
+name = "Анна Смирнова"
+
+[channel_managers.wb]
+user_id = 18
+name = "Олег Петров"
+
+# Marketplaces: client IDs here, keys in the environment
+# ozon_client_id = "123456"
+
+# 1C:Trade Management, standard OData interface
+[onec]
+# url = "https://1c.example.ru/trade/odata/standard.odata"
+# user = "odata"
+
+# Any OpenAI-compatible endpoint: YandexGPT, GigaChat via gpt2giga, vLLM
+[llm]
+# base_url = "https://llm.example.ru/v1"
+# model = "qwen3-32b"

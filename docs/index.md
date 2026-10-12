@@ -1,16 +1,24 @@
-# my-package
+# marketplace-retail-ai-control
 
-Welcome to the API documentation for `my-package`, generated from the
+The main result of this repository is the
+[concept of an AI management loop](concept/README.md) for a Wildberries and
+Ozon retailer (in Russian), with its [sources appendix](concept/sources.md).
+The pilot is implemented in `src/retail_ai_control`: see its
+[architecture](architecture/README.md) and the
+[UX guidelines of its screens](ux/README.md).
+
+The API pages below document the template example package `my-package`,
+generated from the
 [python-ai-driven-development-pipeline-template](https://github.com/link-foundation/python-ai-driven-development-pipeline-template).
-
-When you bootstrap a new repository from this template, replace this page with
-your own landing content and update [`docs/conf.py`](https://github.com/link-foundation/python-ai-driven-development-pipeline-template/blob/main/docs/conf.py)
-with your project name, author, and the autodoc target package.
 
 ```{toctree}
 :maxdepth: 2
 :caption: Contents
 
+concept/README
+concept/sources
+architecture/README
+ux/README
 api
 preview-regeneration
 ```

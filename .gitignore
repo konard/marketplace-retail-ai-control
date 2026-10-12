@@ -207,3 +207,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Playwright MCP browser captures
+.playwright-mcp/
+
+# Diagram screenshots from experiments/screenshot_diagrams.js
+experiments/diagrams/

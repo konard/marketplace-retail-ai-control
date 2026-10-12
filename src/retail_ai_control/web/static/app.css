@@ -1,0 +1,43 @@
+/* Small additions to Pico CSS. Colours keep WCAG 2.2 AA contrast and are
+   never the only carrier of meaning: every status is also a word. */
+.skip-link { position: absolute; left: -10000px; }
+.skip-link:focus { left: 1rem; top: 1rem; z-index: 10; background: var(--pico-background-color); padding: .5rem 1rem; }
+.status { display: inline-block; padding: .1rem .5rem; border-radius: .25rem; border: 1px solid currentColor; font-size: .875em; white-space: nowrap; }
+.status-wait { color: #8a4b00; }
+.status-work { color: #0b5394; }
+.status-done { color: #1d6b2f; }
+.status-off { color: #5c5c5c; }
+.source-label { display: inline-block; padding: .1rem .5rem; border-radius: .25rem; background: var(--pico-secondary-background); color: var(--pico-secondary-inverse); font-size: .8em; }
+.impact { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.sparkline { display: block; width: 100%; max-width: 28rem; height: auto; }
+.sparkline polyline { fill: none; stroke: var(--pico-primary); stroke-width: 2; }
+.sparkline line { stroke: var(--pico-muted-color); stroke-dasharray: 4 3; }
+.sparkline circle { fill: var(--pico-primary); }
+.card-section h2 { font-size: 1.15rem; margin-bottom: .5rem; }
+.field-error { color: var(--pico-del-color); display: block; margin-top: -.5rem; margin-bottom: .75rem; }
+.alert { border-left: .25rem solid var(--pico-del-color); padding-left: 1rem; }
+.notice { border-left: .25rem solid var(--pico-muted-border-color); padding-left: 1rem; color: var(--pico-muted-color); }
+.verdict { font-size: 1.25rem; }
+.error-summary { border: .2rem solid var(--pico-del-color); border-radius: var(--pico-border-radius); padding: 1rem 1.25rem 0; margin-bottom: var(--pico-spacing); }
+.error-summary a { color: var(--pico-del-color); font-weight: 600; }
+/* WCAG 1.4.10 Reflow: the menu wraps instead of scrolling sideways on a phone. */
+@media (max-width: 575px) {
+  header nav, header nav ul { flex-wrap: wrap; }
+}
+/* The decision card: analysis on the left, what the approver acts on in a
+   sticky panel on the right; one column on narrow screens. */
+.card-layout { display: grid; gap: var(--pico-block-spacing-horizontal); }
+@media (min-width: 1024px) {
+  .card-layout { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; }
+  .decision-panel { position: sticky; top: 1rem; }
+}
+.decision-panel { background: var(--pico-card-background-color); box-shadow: var(--pico-card-box-shadow); border-radius: var(--pico-border-radius); padding: var(--pico-block-spacing-vertical) var(--pico-block-spacing-horizontal); }
+.panel-title { font-weight: 600; color: var(--pico-muted-color); text-transform: uppercase; letter-spacing: .04em; font-size: .8rem; }
+input.action-value { max-width: 10rem; display: block; }
+.decision-panel button { width: auto; }
+.reject summary { color: var(--pico-secondary); }
+/* The period of the journal: the button sits on the line of the fields. */
+.period .grid { align-items: end; }
+.period-submit button { width: auto; margin-bottom: var(--pico-spacing); }
+.summary { font-weight: 600; }

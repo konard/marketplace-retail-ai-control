@@ -1,0 +1,141 @@
+{% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import error_summary %}
+{% set decision = card.decision %}
+{% block content %}
+<p><a href="/">← К отклонениям</a></p>
+<hgroup>
+  <h1>{{ title }}</h1>
+  <p>{{ card.deviation.message }} · <span class="status {{ card.status | status_class }}">{{ card.status }}</span></p>
+</hgroup>
+{{ error_summary(errors) }}
+
+<div class="card-layout">
+<div class="card-analysis">
+<section class="card-section" aria-labelledby="what">
+  <h2 id="what">Что произошло</h2>
+  <p>{{ card.deviation.message }} ({{ card.period }}). Потери: <strong class="impact">{{ card.deviation.impact | money }}</strong>.</p>
+  {% if card.sparkline %}
+  {% set s = card.sparkline %}
+  <figure>
+    <svg class="sparkline" role="img" aria-labelledby="spark-caption" viewBox="0 0 {{ s.width }} {{ s.height }}" width="{{ s.width }}" height="{{ s.height }}">
+      {% if s.plan_y is not none %}<line x1="0" x2="{{ s.width }}" y1="{{ s.plan_y }}" y2="{{ s.plan_y }}"></line>{% endif %}
+      <polyline points="{{ s.points }}"></polyline>
+      <circle cx="{{ s.last[0] }}" cy="{{ s.last[1] }}" r="3"></circle>
+    </svg>
+    <figcaption id="spark-caption"><small>{{ s.title }}{% if s.plan_y is not none %} (пунктир){% endif %}</small></figcaption>
+  </figure>
+  {% endif %}
+</section>
+
+<section class="card-section" aria-labelledby="why">
+  <h2 id="why">Почему</h2>
+  {% if card.withheld %}
+  <p class="notice" role="status">{{ card.withheld }}</p>
+  {% elif decision %}
+  <p><span class="source-label">{{ decision.label }}</span></p>
+  <p id="explanation">{{ decision.explanation }}</p>
+  <p><small>{{ limits_note }}.</small></p>
+  {% if card.figures %}
+  <details{% if errors %} open{% endif %}>
+    <summary>Цифры и источники</summary>
+    <table>
+      <caption>Цифры анализа и запросы, из которых они получены</caption>
+      <thead><tr><th scope="col">Показатель</th><th scope="col" class="num">Значение</th><th scope="col">Источник</th></tr></thead>
+      <tbody>
+      {% for figure in card.figures %}
+        <tr>
+          <th scope="row">{{ figure.label }}</th>
+          <td class="num">{{ figure.value }}</td>
+          <td>{% if figure.evidence_id %}<a href="/evidence/{{ figure.evidence_id }}">{{ figure.source }}</a>{% else %}—{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </details>
+  {% endif %}
+  {% if card.cause_evidence %}<p><a id="cause-evidence" href="/evidence/{{ card.cause_evidence }}">Проверить данные причины</a></p>{% endif %}
+  {% else %}
+  <p>Анализ ещё не готов.</p>
+  {% endif %}
+</section>
+</div>
+
+<section class="decision-panel" aria-labelledby="panel-title">
+<p id="panel-title" class="panel-title">Решение по отклонению</p>
+
+<section class="card-section" aria-labelledby="todo">
+  <h2 id="todo">Что сделать</h2>
+  {% if decision %}
+  <ol>
+  {% for action in card.actions %}
+    <li>
+      {{ action.text }}
+      {% if action.label and card.can_decide %}
+      {% set key = "value_" ~ action.type %}
+      <label for="{{ key }}">{{ action.label }}</label>
+      <input id="{{ key }}" class="action-value" name="{{ key }}" form="approve-form" type="text" inputmode="decimal" value="{{ action.value }}"
+        aria-describedby="{{ key }}-hint{% if errors[key] %} {{ key }}-error{% endif %}"{% if errors[key] %} aria-invalid="true"{% endif %}>
+      <small id="{{ key }}-hint">Оставьте поле пустым, чтобы убрать действие.</small>
+      {% if errors[key] %}<small id="{{ key }}-error" class="field-error">{{ errors[key] }}</small>{% endif %}
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+  {% else %}
+  <p>Предложений пока нет.</p>
+  {% endif %}
+</section>
+
+<section class="card-section" aria-labelledby="effect">
+  <h2 id="effect">Ожидаемый эффект</h2>
+  {% if decision %}
+  <p>{{ card.criterion }}</p>
+  <p><small>Через несколько дней после выполнения система сравнит маржу товара с похожими товарами без решений и запишет результат в журнал.</small></p>
+  {% else %}
+  <p>—</p>
+  {% endif %}
+</section>
+
+<section class="card-section" aria-labelledby="decide">
+  <h2 id="decide">Решение</h2>
+  <p>Статус: <span class="status {{ card.status | status_class }}">{{ card.status }}</span></p>
+  {% if card.can_decide %}
+  <form id="approve-form" method="post" action="/decisions/{{ decision.id }}/approve">
+    <button type="submit">Утвердить</button>
+  </form>
+  <details class="reject"{% if errors.reason %} open{% endif %}>
+    <summary>Отклонить…</summary>
+    <form method="post" action="/decisions/{{ decision.id }}/reject">
+      <label for="reason">Причина отклонения</label>
+      <textarea id="reason" name="reason" rows="2"{% if errors.reason %} aria-invalid="true" aria-describedby="reason-error"{% endif %}>{{ reason }}</textarea>
+      {% if errors.reason %}<small id="reason-error" class="field-error">{{ errors.reason }}</small>{% endif %}
+      <button type="submit" class="secondary">Отклонить</button>
+    </form>
+  </details>
+  {% elif card.why_not %}
+  <p class="notice">{{ card.why_not }}</p>
+  {% endif %}
+  {% if decision and decision.task_id %}
+  <p>Задача в Битрикс24 № {{ decision.task_id }}{% if decision.responsible_name %}, ответственный — {{ decision.responsible_name }}{% endif %}{% if decision.deadline %}, срок {{ decision.deadline | day }}{% endif %}.</p>
+  {% endif %}
+  {% if decision and decision.result_text %}<p><strong>Результат:</strong> {{ decision.result_text }}</p>{% endif %}
+  {% if card.journal %}
+  <details>
+  <summary>История решения</summary>
+  <div class="overflow-auto">
+  <table>
+    <caption>Журнал решения</caption>
+    <thead><tr><th scope="col">Дата</th><th scope="col">Этап</th><th scope="col">Пользователь</th><th scope="col">Комментарий</th></tr></thead>
+    <tbody>
+    {% for event in card.journal %}
+      <tr><td>{{ event.day }}</td><th scope="row">{{ event.stage }}</th><td>{{ event.user_id if event.user_id is not none else "система" }}</td><td>{{ event.note }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  </details>
+  {% endif %}
+</section>
+</section>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p class="verdict"><strong>{{ scorecard.verdict }}</strong></p>
+<p>Дополнительная маржа за пилот: <strong class="impact">{{ margin }}</strong></p>
+<table>
+  <caption>Критерии успеха пилота, заданные до старта</caption>
+  <thead>
+    <tr><th scope="col">Критерий</th><th scope="col">Цель</th><th scope="col">Факт</th><th scope="col">Выполнен</th></tr>
+  </thead>
+  <tbody>
+  {% for item in scorecard.criteria %}
+    <tr>
+      <th scope="row">{{ item.name }}</th>
+      <td>{{ item.target }}</td>
+      <td>{{ item.actual }}</td>
+      <td><span class="status {{ 'status-done' if item.met else 'status-wait' }}">{{ "да" if item.met else "нет" }}</span></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="notice">Эффект решения — разница изменения маржи товара и похожих товаров без решений, умноженная на выручку после изменения.</p>
+{% endblock %}
